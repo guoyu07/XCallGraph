@@ -1,0 +1,24 @@
+{
+	"name": "diskerror/x-call-graph",
+	"description": "Builds a call graph from XDebug profiler output.",
+	"type": "project",
+	"require": {
+		"php": "^5.5",
+		"zendframework/zend-console": "2.5",
+		"zendframework/zend-stdlib": "2.5",
+		"diskerror/typed": "^0.2.6"
+	},
+	"autoload": {
+		"psr-4": {
+			"Struct\\": "Structs",
+			"Model\\": "Models"
+		}
+	},
+	"license": "Apache License, Version 2.0",
+	"authors": [
+		{
+			"name": "diskerror",
+			"email": "reidw@rawsound.com.com"
+		}
+	]
+}
