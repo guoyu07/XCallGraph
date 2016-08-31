@@ -3,15 +3,15 @@
 	"description": "Builds a call graph from XDebug profiler output.",
 	"type": "project",
 	"require": {
-		"php": "^5.5",
-		"zendframework/zend-console": "2.5",
-		"zendframework/zend-stdlib": "2.5",
-		"diskerror/typed": "^0.2.6"
+		"php": "^5.6",
+		"zendframework/zend-console": "dev-master",
+		"diskerror/typed": "dev-master",
+		"diskerror/utilities": "dev-master"
 	},
 	"autoload": {
 		"psr-4": {
-			"Struct\\": "Structs",
-			"Model\\": "Models"
+			"Struct\\": "structs",
+			"Model\\": "models"
 		}
 	},
 	"license": "Apache License, Version 2.0",
