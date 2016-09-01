@@ -13,13 +13,13 @@ class Parser extends \Diskerror\Utilities\Singleton
 
     function exec($inputFile, $outputFile)
     {
-	    $inputFileHandle = fopen($inputFile, 'r');
-// 	    $outputFileHandle = fopen($outputFile, 'w');
+        $inputFileHandle = fopen($inputFile, 'r');
+//      $outputFileHandle = fopen($outputFile, 'w');
 
         //  Pull metadata from file.
         $graph = new \Struct\Graph;
         $lc = 0;
-	    while (1) {
+        while (1) {
             $line = self::_getLine($inputFileHandle);
             $lc++;
 
@@ -61,11 +61,11 @@ class Parser extends \Diskerror\Utilities\Singleton
                 default:
                 break;
             }
-	    }
+        }
 
         //  Gather nodes (and edges soon).
         $node = null;
-	    while (1) {
+        while (1) {
             $m = [];    //  match values
             if ($line === 'fl=php:internal') {
                 //  an empty line is also false
@@ -109,11 +109,11 @@ class Parser extends \Diskerror\Utilities\Singleton
             $line = self::_getLine($inputFileHandle);
             $lc++;
 
-	        //  End of file returns false.
+            //  End of file returns false.
             if ($line === false) {
                 break;
             }
-	    }
+        }
 
         return $graph;
     }
