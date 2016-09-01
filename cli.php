@@ -18,22 +18,33 @@ try {
 		'i' => 'Include internal PHP functions.'
 	]);
 
-	$files = $opts->getRemainingArgs());
+	$files = $opts->getRemainingArgs();
+
+	if (count($files)===0) {
+	    throw new RuntimeException('missing input file');
+	}
+
+	if (count($files)===1) {
+	    $files[] = $files[0] . '.dot';
+	}
+
+	if (count($files)>2) {
+	    throw new RuntimeException('too many input files');
+	}
+
+	$parser = Model\Parser::getInstance();
+	$parser->setOptions($opts->toArray());
+	$graph = $parser->exec($files[0], $files[1]);
+
+	print_r($graph->toArray());
 
 	//  Open cachegrind file.
 	//  Parse data into objects.
 	//  Convert objects into "dot" file.
-
-	//  Struct\Node
-	//  Struct\Edge
-
-	//  Model\Parser
-
-	new Struct\Node;
-	new Struct\Edge;
-	new Model\Parser;
+	//  Convert "dot" file into "svg" file.
 }
 catch( Zend\Console\Exception\InvalidArgumentException $e ) {
+    echo 'Usage: xcg [-h | [-i] input_file [ output_file ]', PHP_EOL;
 	echo $e->getUsageMessage();
 	exit( $e->getCode() );
 }
