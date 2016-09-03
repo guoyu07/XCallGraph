@@ -34,9 +34,11 @@ try {
 
     $parser = Model\Parser::getInstance();
     $parser->setOptions($opts->toArray());
-    $graph = $parser->exec($files[0], $files[1]);
+    $graph = $parser->exec($files[0]);
 
-    print_r($graph->toArray());
+    $builder = Model\Builder::getInstance();
+    $builder->setOptions($opts->toArray());
+    $builder->exec($graph, $files[1]);
 
     //  Open cachegrind file.
     //  Parse data into objects.

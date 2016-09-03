@@ -12,6 +12,7 @@ class Graph extends Typed\TypedClass
     protected $part = 0;
     protected $positions = '';
     protected $events = '';
+    protected $fileLineCount = 0;
     protected $nodes = '__class__\\Struct\\NodeList';
     protected $edges = '__class__\\Struct\\EdgeList';
 
