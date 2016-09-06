@@ -11,18 +11,43 @@ class Builder extends \Diskerror\Utilities\Singleton
 
 	function exec(\Struct\Graph $graph, $fileName)
 	{
-		$file = fopen($fileName, 'w');
-		fwrite($file, 'digraph "' . $graph->command . '" {' . PHP_EOL);
+		$file = new FileWriter($fileName);
+
+		$file->writeLn('digraph "' . $graph->command . '" {');
+		$file->writeLn('rankdir=LR;');
+		$file->writeLn('node [fontsize=7,shape=box];');
+		$file->writeLn('stylesheet="' . __DIR__ . '/../svg_style.css";');
 
 		foreach ($graph->nodes as $node) {
-			$label = preg_replace('/(::|->)/', '\\n$1', $node->functionName);
-			fwrite($file, '"' . $node->functionName . '" [label="' . $label . '"];' . PHP_EOL);
+			$file->write('"' . $node->functionName . '" [label="' . preg_replace('/(::|->)/', '\\n$1', $node->functionName) . '"');
+
+			switch ($node->area) {
+				case 'mage':
+				$file->write(',shape=box,style=filled,fillcolor=gray92');
+				break;
+
+				case 'enterprise':
+				$file->write(',shape=box');
+				break;
+
+				case 'local':
+				case 'community':
+				case '':
+				$file->write(',shape=ellipse');
+				break;
+
+				case 'Mage':
+				$file->write(',shape=hexagon,style=filled,fillcolor=orange1');
+				break;
+			}
+
+			$file->writeLn('];');
 		}
 
 		foreach ($graph->edges as $name=>$edge) {
-			fwrite($file, '"' . $edge->caller . '" -> "' . $edge->callee . '";' . PHP_EOL);
+			$file->writeLn('"' . $edge->caller . '" -> "' . $edge->callee . '";');
 		}
 
-		fwrite($file, '}' . PHP_EOL);
+		$file->writeLn('}');
 	}
 }

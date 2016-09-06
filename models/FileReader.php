@@ -12,7 +12,7 @@ class FileReader
 	{
         $this->_fileHandle = fopen($fileName, 'r');
         if ($this->_fileHandle === null) {
-            throw new Exception('bad input file');
+            throw new RuntimeException('bad input file');
         }
 	}
 
@@ -27,7 +27,7 @@ class FileReader
 	    $skip = (int) $skip;
 
 	    if ($skip < 0) {
-	        throw new ErrorException('"skip" cannot be negative');
+	        throw new RuntimeException('"skip" cannot be negative');
 	    }
 	    elseif ($skip === 0) {
 	        return $this->_line;
@@ -61,7 +61,7 @@ class FileReader
 	        break;
 
 	        default:
-	        throw new ErrorException('property not found');
+	        throw new RuntimeException('property not found');
 	    }
 	}
 }

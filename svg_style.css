@@ -1,0 +1,8 @@
+path:hover {
+pointer-events:all;
+}
+
+path:hover {
+stroke:red;
+stroke-width:4px;
+}
