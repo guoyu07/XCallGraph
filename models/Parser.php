@@ -12,46 +12,48 @@ class Parser extends \Diskerror\Utilities\Singleton
 
 	function setOptions(array $opts)
 	{
+		//	handle the options
 
+		return $this;
 	}
 
-	function exec($inputFileName)
+	function exec(ReaderInterface $input)
 	{
-		$file = new FileReader($inputFileName);
-
 		//	Pull metadata from file.
 		$graph = new \Struct\Graph;
 		while (1) {
-			$line = $file->getLine();
+			$line = $input->getLine();
 
 			//	If we ran out of file here then there's something wrong.
 			if ($line === false) {
-				throw new \RuntimeException('file ended early');
+				throw new \RuntimeException('input ended early');
 			}
+
+			list(,$data) = explode(': ', $line);
 
 			switch (substr($line, 0, 3)) {
 				case 'ver':
-				$graph->version = $line;
+				$graph->version = $data;
 				break;
 
 				case 'cre':
-				$graph->creator = $line;
+				$graph->creator = $data;
 				break;
 
 				case 'cmd':
-				$graph->command = $line;
+				$graph->command = $data;
 				break;
 
 				case 'par':
-				$graph->part = $line;
+				$graph->part = $data;
 				break;
 
 				case 'pos':
-				$graph->positions = $line;
+				$graph->positions = $data;
 				break;
 
 				case 'eve':
-				$graph->events = $line;
+				$graph->events = $data;
 				break;
 
 				case 'fl=':
@@ -71,7 +73,7 @@ class Parser extends \Diskerror\Utilities\Singleton
 			if ($node===null) {
 				if ($line === 'fl=php:internal') {
 					//	an empty line also evaluates to false
-					while ($file->getLine())
+					while ($input->getLine())
 						;
 				}
 				elseif (substr($line, 0, 3) === 'fl=') {
@@ -101,11 +103,11 @@ class Parser extends \Diskerror\Utilities\Singleton
 					}
 
 					//	The next line will begin with an "fn=".
-					$line = $file->getLine();
+					$line = $input->getLine();
 					if (preg_match(self::STOP_REGEX, $line)) {
 						$node = null;
 						//	an empty line is also false
-						while ($file->getLine())
+						while ($input->getLine())
 							;
 					}
 					else {
@@ -113,7 +115,7 @@ class Parser extends \Diskerror\Utilities\Singleton
 					}
 				}
 				elseif (substr($line, 0, 8) === 'summary:') {
-					//	Stop processing because we're in the summary section near the end of the file.
+					//	Stop processing because we're in the summary section near the end of the input.
 					break;
 				}
 			}
@@ -121,22 +123,22 @@ class Parser extends \Diskerror\Utilities\Singleton
 			else {
 				if (substr($line, 0, 4) === 'cfl=') {
 					if ($line === 'cfl=php:internal') {
-						$file->getLine(3);
+						$input->getLine(3);
 					}
 					else {
 						$edge = new \Struct\Edge;
 						$edge->caller = $node->functionName;
 
 						//	The next line will begin with a "cfn=".
-						$line = $file->getLine();
+						$line = $input->getLine();
 						if (preg_match(self::STOP_REGEX, $line)) {
-							$file->getLine(2);
+							$input->getLine(2);
 						}
 						else {
 							$edge->callee = substr($line, 4);
 
 							//	The next line starts with "calls=", so skip it and use the one after.
-							$line = $file->getLine(2);
+							$line = $input->getLine(2);
 							$digits = explode(' ', $line);
 							$edgeName = $edge->caller . '>>' . $edge->callee;
 							if (isset($graph->edges[$edgeName])) {
@@ -163,15 +165,15 @@ class Parser extends \Diskerror\Utilities\Singleton
 			}
 
 			//////////////////////////////////////////////////////////////////
-			$line = $file->getLine();
+			$line = $input->getLine();
 
-			//	End of file returns false.
+			//	End of input returns false.
 			if ($line === false) {
 				break;
 			}
 		}
 
-		$graph->fileLineCount = $file->linesRead;
+		$graph->fileLineCount = $input->linesRead;
 
 		//	Remove orphaned nodes.
 		foreach ($graph->nodes as $node=>$v) {

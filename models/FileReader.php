@@ -2,39 +2,29 @@
 
 namespace Model;
 
-class FileReader
+class FileReader extends FileAbstract implements ReaderInterface
 {
-	protected $_fileHandle = null;
 	protected $_line = null;
 	protected $_linesRead = 0;
 
-	function __construct($fileName)
+	protected function _getMode()
 	{
-        $this->_fileHandle = fopen($fileName, 'r');
-        if ($this->_fileHandle === null) {
-            throw new RuntimeException('bad input file');
-        }
-	}
-
-	function __destruct()
-	{
-	    //  Constructor insures file handle is good.
-        fclose($this->_fileHandle);
+	    return 'r';
 	}
 
 	function getLine($skip=1)
 	{
 	    $skip = (int) $skip;
-
 	    if ($skip < 0) {
 	        throw new RuntimeException('"skip" cannot be negative');
 	    }
-	    elseif ($skip === 0) {
+
+	    if ($skip === 0) {
 	        return $this->_line;
 	    }
 
 	    while ($skip-- && $this->_line!==false) {
-		    $this->_line = fgets($this->_fileHandle);
+		    $this->_line = fgets($this->_getHandle());
             $this->_linesRead++;
         }
 

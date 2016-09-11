@@ -6,9 +6,9 @@ use Diskerror\Typed;
 
 class Graph extends Typed\TypedClass
 {
+    protected $version = 0;
     protected $creator = '';
     protected $command = '';
-    protected $version = 0;
     protected $part = 0;
     protected $positions = '';
     protected $events = '';
@@ -18,32 +18,27 @@ class Graph extends Typed\TypedClass
 
     function _set_creator($in)
     {
-        $this->creator = trim( preg_replace('/^creator:(.*)$/', '$1', $in) );
+        $this->creator = self::trim($in);
     }
 
     function _set_command($in)
     {
-        $this->command = trim( preg_replace('/^cmd:(.*)$/', '$1', $in) );
-    }
-
-    function _set_version($in)
-    {
-        $this->version = (int) trim( preg_replace('/^version:(.*)$/', '$1', $in) );
-    }
-
-    function _set_part($in)
-    {
-        $this->part = (int) trim( preg_replace('/^part:(.*)$/', '$1', $in) );
+        $this->command = self::trim($in);
     }
 
     function _set_positions($in)
     {
-        $this->positions = trim( preg_replace('/^positions:(.*)$/', '$1', $in) );
+        $this->positions = self::trim($in);
     }
 
     function _set_events($in)
     {
-        $this->events = trim( preg_replace('/^events:(.*)$/', '$1', $in) );
+        $this->events = self::trim($in);
+    }
+
+    static function trim($s)
+    {
+        return trim($s, "\x00..\x20");
     }
 
 }

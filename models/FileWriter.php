@@ -2,31 +2,20 @@
 
 namespace Model;
 
-class FileWriter
+class FileWriter extends FileAbstract implements WriterInterface
 {
-	protected $_fileHandle = null;
-
-	function __construct($fileName)
+	protected function _getMode()
 	{
-        $this->_fileHandle = fopen($fileName, 'w');
-        if ($this->_fileHandle === null) {
-            throw new RuntimeException('bad input file');
-        }
-	}
-
-	function __destruct()
-	{
-	    //  Constructor insures file handle is good.
-        fclose($this->_fileHandle);
+	    return 'w';
 	}
 
 	function writeLn($s)
 	{
-		fwrite($this->_fileHandle, (string) $s . PHP_EOL);
+		fwrite($this->_getHandle(), (string) $s . PHP_EOL);
 	}
 
 	function write($s)
 	{
-		fwrite($this->_fileHandle, (string) $s);
+		fwrite($this->_getHandle(), (string) $s);
 	}
 }

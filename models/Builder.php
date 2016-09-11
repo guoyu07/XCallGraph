@@ -6,48 +6,48 @@ class Builder extends \Diskerror\Utilities\Singleton
 {
 	function setOptions(array $opts)
 	{
+		//	handle the options
 
+		return $this;
 	}
 
-	function exec(\Struct\Graph $graph, $fileName)
+	function exec(\Struct\Graph $graph, WriterInterface $output)
 	{
-		$file = new FileWriter($fileName);
-
-		$file->writeLn('digraph "' . $graph->command . '" {');
-		$file->writeLn('rankdir=LR;');
-		$file->writeLn('node [fontsize=7,shape=box];');
-		$file->writeLn('stylesheet="' . __DIR__ . '/../svg_style.css";');
+		$output->writeLn('digraph "' . $graph->command . '" {');
+		$output->writeLn('rankdir=LR;');
+		$output->writeLn('node [fontsize=8,shape=box];');
+		$output->writeLn('stylesheet="' . __DIR__ . '/../svg_style.css";');
 
 		foreach ($graph->nodes as $node) {
-			$file->write('"' . $node->functionName . '" [label="' . preg_replace('/(::|->)/', '\\n$1', $node->functionName) . '"');
+			$output->write('"' . $node->functionName . '" [label="' . preg_replace('/(::|->)/', '\\n$1', $node->functionName) . '"');
 
 			switch ($node->area) {
 				case 'mage':
-				$file->write(',shape=box,style=filled,fillcolor=gray92');
+				$output->write(',shape=box,style=filled,fillcolor=gray92');
 				break;
 
 				case 'enterprise':
-				$file->write(',shape=box');
+				$output->write(',shape=box');
 				break;
 
 				case 'local':
 				case 'community':
 				case '':
-				$file->write(',shape=ellipse');
+				$output->write(',shape=ellipse');
 				break;
 
 				case 'Mage':
-				$file->write(',shape=hexagon,style=filled,fillcolor=orange1');
+				$output->write(',shape=hexagon,style=filled,fillcolor=orange1');
 				break;
 			}
 
-			$file->writeLn('];');
+			$output->writeLn('];');
 		}
 
 		foreach ($graph->edges as $name=>$edge) {
-			$file->writeLn('"' . $edge->caller . '" -> "' . $edge->callee . '";');
+			$output->writeLn('"' . $edge->caller . '" -> "' . $edge->callee . '";');
 		}
 
-		$file->writeLn('}');
+		$output->writeLn('}');
 	}
 }
