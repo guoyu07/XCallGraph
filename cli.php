@@ -32,15 +32,15 @@ try {
 		throw new RuntimeException('too many input files');
 	}
 
-    echo 'Parsing XDebug/Cachegrind.', PHP_EOL;
+	echo 'Parsing XDebug/Cachegrind.', PHP_EOL;
 	$parser = Model\Parser::getInstance()->setOptions($opts->toArray());
 	$graph = $parser->exec(new Model\FileReader($files[0]));
 
-    echo 'Building Graphviz (dot) data.', PHP_EOL;
+	echo 'Building Graphviz (dot) data.', PHP_EOL;
 	$builder = Model\Builder::getInstance()->setOptions($opts->toArray());
 	$builder->exec($graph, new Model\FileWriter($files[1]));
 
-    echo 'Converting DOT to SVG.', PHP_EOL;
+	echo 'Converting DOT to SVG.', PHP_EOL;
 	exec('dot -Tsvg ' . $files[1] . ' -O');
 }
 catch( Zend\Console\Exception\InvalidArgumentException $e ) {

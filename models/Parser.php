@@ -4,8 +4,10 @@ namespace Model;
 
 class Parser extends \Diskerror\Utilities\Singleton
 {
-// 	const STOP_REGEX = '/fn=include|fn=require|\\buc_words\\b|getSingleton|getModelInstance|Mage::|Mage_Core_Model_Resource|_callObserverMethod|\\bZend_|Varien|Autoload|autoload|Mage_Core_Model_Store->get(Code|Config)|Mage_Core_Model_Config->get(Node|Options)|Mage_Core_Model_App->getStore|Mage_Cache_Backend|Mage_Admin_Model_Session|Mage_Core_Model_App->(_initStores|getRequest|getFrontController)|Mage_Adminhtml_Controller_Action->preDispatch/';
-	const STOP_REGEX = '/fn=include|fn=require|Autoload|autoload|\\buc_words\\b|\\bZend_|\\bVarien_(Profiler|Db)|Simplexml_Element/';
+	const FILE_STOP_REGEX = '#fl=php:internal|/code/community/|/code/local/#';
+
+//	const FUNCT_STOP_REGEX = '/fn=include|fn=require|\\buc_words\\b|getSingleton|getModelInstance|Mage::|Mage_Core_Model_Resource|_callObserverMethod|\\bZend_|Varien|Autoload|autoload|Mage_Core_Model_Store->get(Code|Config)|Mage_Core_Model_Config->get(Node|Options)|Mage_Core_Model_App->getStore|Mage_Cache_Backend|Mage_Admin_Model_Session|Mage_Core_Model_App->(_initStores|getRequest|getFrontController)|Mage_Adminhtml_Controller_Action->preDispatch/';
+	const FUNCT_STOP_REGEX = '/fn=include|fn=require|Autoload|autoload|\\buc_words\\b|\\bZend_|\\bVarien_(Profiler|Db)|Simplexml_Element|\\bMage::/';
 
 	protected $_useInternal = false;
 	protected $_lineCount = 0;
@@ -71,7 +73,7 @@ class Parser extends \Diskerror\Utilities\Singleton
 		while (1) {
 			//	Looking to start node.
 			if ($node===null) {
-				if ($line === 'fl=php:internal') {
+				if (preg_match(self::FILE_STOP_REGEX, $line)) {
 					//	an empty line also evaluates to false
 					while ($input->getLine())
 						;
@@ -104,7 +106,7 @@ class Parser extends \Diskerror\Utilities\Singleton
 
 					//	The next line will begin with an "fn=".
 					$line = $input->getLine();
-					if (preg_match(self::STOP_REGEX, $line)) {
+					if (preg_match(self::FUNCT_STOP_REGEX, $line)) {
 						$node = null;
 						//	an empty line is also false
 						while ($input->getLine())
@@ -122,7 +124,7 @@ class Parser extends \Diskerror\Utilities\Singleton
 			//	Currently have a node. Looking to start edge.
 			else {
 				if (substr($line, 0, 4) === 'cfl=') {
-					if ($line === 'cfl=php:internal') {
+					if (preg_match(self::FILE_STOP_REGEX, $line)) {
 						$input->getLine(3);
 					}
 					else {
@@ -131,7 +133,7 @@ class Parser extends \Diskerror\Utilities\Singleton
 
 						//	The next line will begin with a "cfn=".
 						$line = $input->getLine();
-						if (preg_match(self::STOP_REGEX, $line)) {
+						if (preg_match(self::FUNCT_STOP_REGEX, $line)) {
 							$input->getLine(2);
 						}
 						else {
